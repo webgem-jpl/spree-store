@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_02_001033) do
+ActiveRecord::Schema.define(version: 2021_09_03_173243) do
 
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.integer "status", default: 0, null: false
@@ -773,6 +773,8 @@ ActiveRecord::Schema.define(version: 2021_09_02_001033) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "presentation"
+    t.boolean "sale_channel"
   end
 
   create_table "spree_refund_reasons", force: :cascade do |t|
@@ -1258,32 +1260,8 @@ ActiveRecord::Schema.define(version: 2021_09_02_001033) do
     t.index ["spree_api_key"], name: "index_spree_users_on_spree_api_key"
   end
 
-  create_table "spree_variants", force: :cascade do |t|
-    t.string "sku", default: "", null: false
-    t.decimal "weight", precision: 8, scale: 2, default: "0.0"
-    t.decimal "height", precision: 8, scale: 2
-    t.decimal "width", precision: 8, scale: 2
-    t.decimal "depth", precision: 8, scale: 2
-    t.datetime "deleted_at"
-    t.boolean "is_master", default: false
-    t.integer "product_id"
-    t.decimal "cost_price", precision: 10, scale: 2
-    t.integer "position"
-    t.string "cost_currency"
-    t.boolean "track_inventory", default: true
-    t.bigint "tax_category_id"
-    t.datetime "updated_at", null: false
-    t.datetime "discontinue_on"
-    t.datetime "created_at", null: false
-    t.index ["deleted_at"], name: "index_spree_variants_on_deleted_at"
-    t.index ["discontinue_on"], name: "index_spree_variants_on_discontinue_on"
-    t.index ["is_master"], name: "index_spree_variants_on_is_master"
-    t.index ["position"], name: "index_spree_variants_on_position"
-    t.index ["product_id"], name: "index_spree_variants_on_product_id"
-    t.index ["sku"], name: "index_spree_variants_on_sku"
-    t.index ["tax_category_id"], name: "index_spree_variants_on_tax_category_id"
-    t.index ["track_inventory"], name: "index_spree_variants_on_track_inventory"
-  end
+# Could not dump table "spree_variants" because of following StandardError
+#   Unknown type 'uuid' for column 'uuid'
 
   create_table "spree_zone_members", force: :cascade do |t|
     t.string "zoneable_type"

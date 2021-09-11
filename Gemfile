@@ -67,5 +67,5 @@ gem 'spree_i18n', '~> 5.0' # translation files (optional)
 # only needed for MacOS and Ruby 3.0
 gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
-gem 'spree_uuid', github: 'webgem-jpl/spree_uuid', branch: 'master'
-gem 'spree_sale_channel', git: 'git@github.com:webgem-jpl/spree_sale_channel.git', branch: 'master'
+gem 'spree_uuid', git: 'git@github.com:webgem-jpl/spree_uuid.git', branch: 'master'
+gem 'spree_sale_channel', git: 'git@github.com:webgem-jpl/spree_sale_channel.git', branch: 'prototype'
