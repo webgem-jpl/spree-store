@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: postgres
+      POSTGRES_DB: spree_store_development
+    ports:
+      - '5432:5432'

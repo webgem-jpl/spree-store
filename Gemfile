@@ -5,8 +5,8 @@ ruby '3.0.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'rails', '~> 6.1.4', '>= 6.1.4.1'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3', '~> 1.4'
+# PostgreSQL database
+gem 'pg'
 # Use Puma as the app server
 gem 'puma', '~> 5.0'
 # Use SCSS for stylesheets
@@ -55,7 +55,7 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem 'spree', '~>4.3.0.rc3' # core and API
+gem 'spree', '~>4.3.0' # core and API
 gem 'spree_frontend' # Rails storefront (optional)
 gem 'spree_backend' # Rails admin panel (optional)
 gem 'spree_emails' # transactional emails (optional)
@@ -68,4 +68,4 @@ gem 'spree_i18n', '~> 5.0' # translation files (optional)
 gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
 gem 'spree_uuid', git: 'git@github.com:webgem-jpl/spree_uuid.git', branch: 'master'
-gem 'spree_sale_channel', git: 'git@github.com:webgem-jpl/spree_sale_channel.git', branch: 'prototype'
+gem 'spree_sale_channel', git: 'git@github.com:webgem-jpl/spree_sale_channel.git', branch: 'master'
