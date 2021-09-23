@@ -1,10 +1,36 @@
 version: '3.7'
 services:
   postgres:
-    image: postgres:alpine
+    image: postgres:12.8-alpine
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_USER: postgres
-      POSTGRES_DB: spree_store_development
+      POSTGRES_DB: sale_channel_development
     ports:
       - '5432:5432'
+
+  sale-channel:
+    image: sale-channel:latest
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  spree-store:
+    image: spree-store
+    build:
+      context: .
+      args:
+        FURY_AUTH: oDJwp-MmpfP9OQAjRbrBnzS9rBEKaZ94M
+    environment:
+      DB_HOST: postgres
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 8812 -b '0.0.0.0'"
+    volumes:
+      - .:/app
+    ports:
+      - "8812:8812"
+    depends_on:
+      - postgres
