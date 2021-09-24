@@ -2,7 +2,7 @@ module SpreeSaleChannel
     module Spree
         module OrderDecorator
             def self.prepended(base)
-                ::Spree::Order.state_machine.before_transition to: :payment, do: :create_checkout
+                ::Spree::Order.state_machine.before_transition to: :delivery, do: :create_checkout
             end
 
             def create_checkout
