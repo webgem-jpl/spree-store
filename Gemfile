@@ -31,6 +31,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'dotenv-rails'
 end
 
 group :development do
@@ -69,5 +70,5 @@ gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
 source "https://#{ENV['FURY_AUTH']}@gem.fury.io/webgem/" do
   gem 'spree_uuid'
-  gem 'spree_sale_channel'
+  gem 'spree_sale_channel','~> 0.0.3'
 end
