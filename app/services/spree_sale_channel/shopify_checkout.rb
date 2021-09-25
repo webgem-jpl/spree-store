@@ -21,48 +21,42 @@ module SpreeSaleChannel
                     "Content-type": "application/json"})
         end
 
-        def url
-            @url ||= "#{ENV['SALE_CHANNEL_URL']}/checkout"
+        def checkout_url
+            "#{ENV['SALE_CHANNEL_URL']}/checkout"
         end
 
-        def payload
-            @payload ||= {
-                order: order.to_json,
-                carts: carts_payload.to_json,
-                bill_address: order.bill_address.to_json,
-                ship_address: order.ship_address.to_json
+        def params
+            @params ||= {
+                order: order_params(order),
+                line_items: order.line_items.to_json,
+                bill_address: address_params(order.bill_address),
+                ship_address: address_params(order.ship_address)
             }.to_json
         end
 
-        #TODO to be tested
-        def carts_payload
-            line_items = order.line_items.map do |li| 
-                line = li.attributes.merge({sku: li.variant.sku})
-                line = line.merge({vendor: li.variant.sku.split("_")[1]})
-                line = line.merge({total: li.total})
-                line
-            end
-            carts = Hash.new()
-            line_items.each{|li| carts[li[:vendor]] =  {}}
-            carts.each do |k,v|
-                carts[k]['line_items'] = line_items.select{|li| li[:vendor] == k}
-                carts[k]['total'] = carts[k]['line_items'].sum{|li| li[:total]}
-            end
-            return carts
+        def order_params(order, line_items)
+            vendor = line_items[0][sku].split('_')[1]
+            order.attributes.merge{vendor: vendor}.to_json
         end
 
-        def call
-            result = create_checkout
-            update_order(result)
+        def address_params(address)
+            address.attributes.merge({state: address.state, country: address.country}).to_json
         end
 
         def create_checkout
             logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!CREATE CHECKOUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            client.post(url, payload)
+            response = client.post(checkout_url, params)
         end
 
         def update_order(result)
             logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!UPDATE ORDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        end
+
+        def call
+            response = create_checkout
+            logger.debug(response.status)
+            logger.debug(response.body)
+            update_order(response)
         end
 
     end
