@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_24_030132) do
+ActiveRecord::Schema.define(version: 2021_09_03_173243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1313,13 +1313,6 @@ ActiveRecord::Schema.define(version: 2021_09_24_030132) do
     t.index ["tax_category_id"], name: "index_spree_variants_on_tax_category_id"
     t.index ["track_inventory"], name: "index_spree_variants_on_track_inventory"
     t.index ["uuid"], name: "index_spree_variants_on_uuid"
-  end
-
-  create_table "spree_vendors", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["name"], name: "index_spree_vendors_on_name", unique: true
   end
 
   create_table "spree_zone_members", id: :serial, force: :cascade do |t|
