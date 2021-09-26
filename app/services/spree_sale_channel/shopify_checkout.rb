@@ -28,15 +28,19 @@ module SpreeSaleChannel
         def params
             @params ||= {
                 order: order_params(order),
-                line_items: order.line_items.to_json,
+                line_items: line_items_params(order),
                 bill_address: address_params(order.bill_address),
                 ship_address: address_params(order.ship_address)
             }.to_json
         end
 
-        def order_params(order, line_items)
-            vendor = line_items[0][sku].split('_')[1]
-            order.attributes.merge{vendor: vendor}.to_json
+        def order_params(order)
+            vendor = order.line_items[0].variant.sku.split('_')[1]
+            order.attributes.merge({vendor: vendor}).to_json
+        end
+
+        def line_items_params(order)
+            order.line_items.map{|li| li.attributes.merge({sku: li.variant.sku})}.to_json
         end
 
         def address_params(address)
