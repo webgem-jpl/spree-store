@@ -69,6 +69,6 @@ gem 'spree_i18n', '~> 5.0' # translation files (optional)
 gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
 source "https://#{ENV['FURY_AUTH']}@gem.fury.io/webgem/" do
-  gem 'spree_uuid'
-  gem 'spree_sale_channel','~> 0.0.3'
+  gem 'spree_uuid','~> 0.0.2'
+  gem 'spree_sale_channel','~> 0.0.13'
 end

@@ -9,13 +9,13 @@ GIT
 GEM
   remote: https://gem.fury.io/webgem/
   specs:
-    spree_sale_channel (0.0.3)
+    spree_sale_channel (0.0.13)
       faraday
       spree_api (>= 4.2.0, < 6.0)
       spree_backend (>= 4.2.0, < 6.0)
       spree_core (>= 4.2.0, < 6.0)
       spree_extension
-    spree_uuid (0.0.1)
+    spree_uuid (0.0.2)
       spree_api (>= 4.2.0, < 6.0)
       spree_backend (>= 4.2.0, < 6.0)
       spree_core (>= 4.2.0, < 6.0)
@@ -472,9 +472,9 @@ DEPENDENCIES
   spree_frontend
   spree_gateway (~> 3.9)
   spree_i18n (~> 5.0)
-  spree_sale_channel (~> 0.0.3)!
+  spree_sale_channel (~> 0.0.13)!
   spree_sample
-  spree_uuid!
+  spree_uuid (~> 0.0.2)!
   spring
   turbolinks (~> 5)
   tzinfo-data
