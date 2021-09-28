@@ -9,6 +9,12 @@
 Spree::Core::Engine.load_seed if defined?(Spree::Core)
 Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
 
+# Prototype
+shirt   = Spree::Prototype.create!(
+            name: 'Shirt',
+            presentation: 'shirt',
+            sale_channel: true
+        )
 
 # Option Type Color
 color   = Spree::OptionType.create!(name:"Color", presentation: "Color")
@@ -46,13 +52,7 @@ large   = Spree::OptionValue.create!(
             presentation: "large",
             option_type_id: size.id)
 
-# Prototype
-shirt   = Spree::Prototype.create!(
-            name: 'Shirt',
-            presentation: 'shirt',
-            sale_channel:  true
-        )
 
-shirt.option_types = [color, size]
-shirt.save!
+shirt.option_types = [size, color]
+
 
