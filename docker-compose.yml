@@ -8,16 +8,10 @@ services:
       POSTGRES_DB: sale_channel_development
     ports:
       - '5432:5432'
-
-  sale-channel:
-    image: sale-channel:latest
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
-    environment:
-      DB_HOST: postgres
-    ports:
-      - "3000:3000"
-    depends_on:
-      - postgres
+  redis_db:
+    image: redis
+    expose:
+      - 6379
 
   spree-store:
     image: spree-store
@@ -27,10 +21,25 @@ services:
         FURY_AUTH: oDJwp-MmpfP9OQAjRbrBnzS9rBEKaZ94M
     environment:
       DB_HOST: postgres
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 8812 -b '0.0.0.0'"
+      REDIS_URL: redis://redis_db:6379/1
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -e production"
     volumes:
       - .:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis_db
+
+  spree-worker:
+    image: spree-store
+    entrypoint: [""]
+    environment:
+      DB_HOST: postgres
+      REDIS_URL: redis://redis_db:6379/1
+    command: "rake resque:work RAILS_ENV=production QUEUE=*"
     ports:
       - "8812:8812"
     depends_on:
       - postgres
+      - redis_db
