@@ -22,7 +22,9 @@ services:
     environment:
       DB_HOST: postgres
       REDIS_URL: redis://redis_db:6379/1
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -e production"
+      SALE_CHANNEL_TOKEN: 111111
+      SALE_CHANNEL_URL: http://sale-channel:5000
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -e production -b '0.0.0.0'"
     volumes:
       - .:/app
     ports:
@@ -31,15 +33,29 @@ services:
       - postgres
       - redis_db
 
+  sale-channel:
+      image: sale-channel:latest
+      command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 5000 -b '0.0.0.0'"
+      environment:
+        DB_HOST: postgres
+        SHOPIFY_API_KEY: e194ff6be922e8db19cc7aa3c1fef0cc
+        SHOPIFY_API_SECRET: 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
+        APP_URL: https://a0c0-135-12-179-233.ngrok.io
+        SPREE_HOST: spree-store:3000
+        SPREE_TOKEN: e5d87581f0e73169e4cd517c1ed143d590131f3215198e30
+      ports:
+        - "5000:5000"
+      depends_on:
+        - postgres
+
   spree-worker:
     image: spree-store
     entrypoint: [""]
     environment:
       DB_HOST: postgres
       REDIS_URL: redis://redis_db:6379/1
+      RAILS_ENV: production
     command: "rake resque:work RAILS_ENV=production QUEUE=*"
-    ports:
-      - "8812:8812"
     depends_on:
       - postgres
       - redis_db

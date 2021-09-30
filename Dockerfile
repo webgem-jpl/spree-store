@@ -12,7 +12,6 @@ ARG FURY_AUTH
 WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
-RUN bash -c 'echo $FURY_AUTH'
 RUN bundle config set gem.fury.io $FURY_AUTH
 RUN bundle install
 
