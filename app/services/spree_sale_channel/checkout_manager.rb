@@ -1,7 +1,5 @@
-require 'faraday'
-
 module SpreeSaleChannel
-    class ShopifyCheckout
+    class CheckoutManager
 
         def initialize(order)
             @order = order
@@ -23,6 +21,12 @@ module SpreeSaleChannel
 
         def checkout_url
             "#{ENV['SALE_CHANNEL_URL']}/checkout"
+        end
+
+        def call
+            response = create_checkout
+            logger.debug(response)
+            response
         end
 
         def params
@@ -51,6 +55,7 @@ module SpreeSaleChannel
             logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!CREATE CHECKOUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             response = client.post(checkout_url, params)
             if response.status == 200
+                logger.debug(response.body)
                 result = JSON.parse(response.body)
                 logger.debug(result)
                 token = result['checkout']['token']
@@ -89,17 +94,5 @@ module SpreeSaleChannel
                     logger.error(result)
             end
         end
-
-        def update_order(result)
-            logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!UPDATE ORDER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        end
-
-        def call
-            response = create_checkout
-            logger.debug(response)
-            update_order(response)
-            response
-        end
-
     end
 end

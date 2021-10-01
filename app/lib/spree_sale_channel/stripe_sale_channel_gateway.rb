@@ -1,3 +1,4 @@
+require 'faraday'
 module SpreeSaleChannel
     class StripeSaleChannelGateway < ::Spree::Gateway
 
