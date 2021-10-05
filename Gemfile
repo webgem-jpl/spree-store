@@ -20,7 +20,6 @@ gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
 gem 'redis', '~> 4.0'
 gem 'hiredis'
-
 # ActiveJob manager
 gem 'resque'
 # Use Active Model has_secure_password
@@ -74,5 +73,5 @@ gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
 source "https://#{ENV['FURY_AUTH']}@gem.fury.io/webgem/" do
   gem 'spree_uuid','~> 0.0.2'
-  gem 'spree_sale_channel','~> 0.0.19'
+  gem 'spree_sale_channel','=0.0.19'
 end

@@ -498,7 +498,7 @@ DEPENDENCIES
   spree_frontend
   spree_gateway (~> 3.9)
   spree_i18n (~> 5.0)
-  spree_sale_channel (~> 0.0.19)!
+  spree_sale_channel (= 0.0.19)!
   spree_sample
   spree_uuid (~> 0.0.2)!
   spring

@@ -114,13 +114,3 @@ module SpreeSaleChannel
         end
     end
 end
-
-
-    # First - Sale Channel
-        # Sale Channel = before payment - create checkout for each vendor return to spree shopify_payments_account_id and token
-        # Spree create a token the vendor
-        # Spree send checkout token, credit card token and payment_account_id
-        # Sale Channel complete checkout - create one transaction per vendor and return transaction result
-        # Spree store the transaction result
-
-    # Second - bill each vendor for commission as a job

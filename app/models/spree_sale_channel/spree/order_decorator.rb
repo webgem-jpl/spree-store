@@ -3,12 +3,13 @@ module SpreeSaleChannel
         module OrderDecorator
             def self.prepended(base)
                 base.has_one :checkout, class_name: 'SpreeSaleChannel::Checkout'
-                ::Spree::Order.state_machine.before_transition to: :delivery, do: :create_checkout
+                ::Spree::Order.state_machine.before_transition to: :payment, do: :set_shipping_line
             end
 
-            def create_checkout
-                SpreeSaleChannel::CheckoutManager.new(self).create_checkout
+            def set_shipping_line
+                ::SpreeSaleChannel::CheckoutManager.new(self).set_shipping_line
             end
+
         end
     end
 end
