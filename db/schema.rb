@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_26_011518) do
+ActiveRecord::Schema.define(version: 2021_10_05_044031) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,8 +64,9 @@ ActiveRecord::Schema.define(version: 2021_09_26_011518) do
 
   create_table "checkouts", force: :cascade do |t|
     t.string "token"
-    t.string "payment_account_id"
-    t.integer "order_id"
+    t.json "data"
+    t.bigint "order_id"
+    t.string "vendor"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["order_id"], name: "index_checkouts_on_order_id"
@@ -83,6 +84,14 @@ ActiveRecord::Schema.define(version: 2021_09_26_011518) do
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
+  end
+
+  create_table "shops", force: :cascade do |t|
+    t.string "domain"
+    t.string "token"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["domain"], name: "index_shops_on_domain"
   end
 
   create_table "spree_addresses", id: :serial, force: :cascade do |t|
@@ -646,6 +655,7 @@ ActiveRecord::Schema.define(version: 2021_09_26_011518) do
     t.string "meta_title"
     t.datetime "discontinue_on"
     t.uuid "uuid"
+    t.bigint "shop_id"
     t.index ["available_on"], name: "index_spree_products_on_available_on"
     t.index ["deleted_at"], name: "index_spree_products_on_deleted_at"
     t.index ["discontinue_on"], name: "index_spree_products_on_discontinue_on"

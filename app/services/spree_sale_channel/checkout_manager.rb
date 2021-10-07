@@ -28,23 +28,14 @@ module SpreeSaleChannel
         end
 
         def create_checkout
-            response = client.post(checkout_url, checkout_params)
-            if response.status == 200
-                result = JSON.parse(response.body)
-                logger.debug(result)
-                token = result['checkout']['token']
-                payment_account_id = result['checkout']['shopify_payments_account_id']
-                order.checkout.delete if order.checkout
-                order.checkout = SpreeSaleChannel::Checkout.create!(
-                    token: token,
-                    payment_account_id: payment_account_id,
-                    order_id: order.id
-                )
-                order.checkout
-            else
-                logger.error({status: response.status, message: response.body})
-                handle_error(response.body)
+            builder = ShopifyCheckout::Builder.new(checkout_params)
+            builder.validate!
+            begin
+                checkout = builder.create_checkout
+            rescue ::ShopifyCheckout::Errors::CheckoutError => e
+                handle_checkout_error(e.message)
             end
+            save_checkout(checkout)
         end
 
         def get_shipping_rates
@@ -57,51 +48,62 @@ module SpreeSaleChannel
             shipments = ::Spree::Shipment.where(order_id: order.id).includes(shipping_rates: {shipping_method: {calculator: {}}})
             title = shipments.first.shipping_rates.detect{|s| s.selected}.shipping_method.calculator.class.title
             rates_result = get_shipping_rates
-            rate = rates_result.detect{|r| r['title'] == title}
+            @rate = rates_result.detect{|r| r['title'] == title}
 
-            params = {
-                shipping_line: rate
-            }.to_json
-
-            response = client.post("#{checkout_url}/#{token}/shipping_line", params)
-            if response.status == 200
-                result = JSON.parse(response.body)
-                logger.debug(result)
-            else
-                logger.error({status: response.status, message: response.body})
-                handle_error(response.body)
+            begin
+                checkout_builder = ::ShopifyCheckout::Builder.new(checkout_params)
+                checkout_builder.validate!
+                checkout = checkout_builder.create_checkout
+            rescue ::ShopifyCheckout::Errors::CheckoutError => e
+                handle_checkout_error(e)
             end
+            save_checkout(checkout)
+        end
+
+        def save_checkout(checkout)
+            Rails.logger.debug(checkout)
+            token = checkout['token']
+            order.checkout.delete if order.checkout
+            order.checkout = SpreeSaleChannel::Checkout.create!(
+                    token: token,
+                    data: checkout,
+                    order_id: order.id,
+                    vendor: vendor
+                )
+            order.checkout
         end
 
         def checkout_params
             @checkout_params ||= {
+                vendor: vendor,
                 order: order_params(order),
                 line_items: line_items_params(order),
                 bill_address: address_params(order.bill_address),
-                ship_address: address_params(order.ship_address)
-            }.to_json
+                ship_address: address_params(order.ship_address),
+                rates: @rate_params
+            }
         end
 
         def order_params(order)
             vendor = order.line_items[0].variant.sku.split('_')[1]
-            order.attributes.merge({vendor: vendor}).to_json
+            order.attributes.merge({vendor: vendor})
         end
 
         def line_items_params(order)
-            order.line_items.map{|li| li.attributes.merge({sku: li.variant.sku})}.to_json
+            order.line_items.map{|li| li.attributes.merge({sku: li.variant.sku})}
         end
 
         def address_params(address)
-            address.attributes.merge({state: address.state, country: address.country}).to_json
+            address.attributes.merge({state: address.state, country: address.country})
         end
 
-        def handle_error(result)
-            logger.debug(result)
-            case result
+        def handle_checkout_error(message)
+            logger.debug(message)
+            case message
                 when "QUANTITY_ERROR"
                    raise Errors::CartError.new('An item in not in amount enough to fullfill this order.')
                 when "LINE_ITEMS_ERROR"
-                    logger.error(result)
+                    logger.error(message)
                     raise Errors::CartError.new('An error occured with your cart.')
                 when "BILLING_ZIP_CODE_ERROR"
                     raise Errors::AddressError.new('There is an issue with the zipcode or State of your billing address.')
@@ -113,9 +115,9 @@ module SpreeSaleChannel
                     raise Errors::AddressError.new('There is an issue with your billing address.')
                 when "EMAIL_OR_PHONE_BLANK"
                     raise Errors::AddressError.new('There is an issue with your phone number.')
-                when "ERROR"
-                    raise CheckoutError.new('An error has occured.')
-                    logger.error(result)
+                else
+                    raise Errors::CheckoutError.new('An error has occured.')
+                    logger.error(message)
             end
         end
 
@@ -129,16 +131,10 @@ module SpreeSaleChannel
         def retrieve_shipping_rates
             raise StandardError.new("Missing checkout") unless checkout = order.checkout
             token = checkout.token
-            url = "#{ENV['SALE_CHANNEL_URL']}/checkout/#{token}/shipping_rates.json"
-            headers = {'Authorization': "Bearer #{ENV['SALE_CHANNEL_TOKEN']}"}
-            response = ::Faraday.post(url, {}, headers)
-            if response.status == 200
-                result = JSON.parse(response.body)
-            else
-                error = JSON.parse(response.body) if response.body
-                raise Spree::ShippingError.new(error)
-            end
-            result['shipping_rates']
+            manager = ::ShopifyCheckout::Manager.new(order)
+            manager.validate!
+            rates_result = manager.get_shipping_rates
+            rates_result
         end
 
         def shipping_cache_key(order)

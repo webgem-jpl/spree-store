@@ -38,7 +38,7 @@ module Spree
                 def retrieve_rates(package)
                     order = package.order
                     checkout_manager = ::SpreeSaleChannel::CheckoutManager.new(order)
-                    return nil unless checkout_manager.create_checkout
+                    checkout_manager.create_checkout
                     checkout_manager.get_shipping_rates
                 end
             end
