@@ -1,19 +1,21 @@
-FROM ruby:3.0.2
-RUN apt-get update && apt-get install -y \
-  curl \
-  build-essential \
-  libpq-dev &&\
-  curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
-  curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-  echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-  apt-get update && apt-get install -y nodejs yarn
+FROM ruby:3.0.2-alpine
 
+RUN apk --update add build-base nodejs tzdata postgresql-dev postgresql-client libxslt-dev libxml2-dev imagemagick
+RUN set -eux \
+    & apk add \
+        --no-cache \
+        nodejs \
+        yarn
+
+
+COPY . /app
 ARG FURY_AUTH
 WORKDIR /app
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
-RUN bundle config set gem.fury.io $FURY_AUTH
-RUN bundle install
+RUN bundle config set gem.fury.io $FURY_AUTH && \
+  bundle config set --local without 'development test' && \
+  bundle install --jobs 5
 
 
 COPY package.json .
