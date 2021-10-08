@@ -48,10 +48,10 @@ module SpreeSaleChannel
             shipments = ::Spree::Shipment.where(order_id: order.id).includes(shipping_rates: {shipping_method: {calculator: {}}})
             title = shipments.first.shipping_rates.detect{|s| s.selected}.shipping_method.calculator.class.title
             rates_result = get_shipping_rates
-            @rate = rates_result.detect{|r| r['title'] == title}
-
+            rate = rates_result.detect{|r| r['title'] == title}
+            raise "Missing shipping rate" unless rate
             begin
-                checkout_builder = ::ShopifyCheckout::Builder.new(checkout_params)
+                checkout_builder = ::ShopifyCheckout::Builder.new(checkout_params.merge({rate: rate}))
                 checkout_builder.validate!
                 checkout = checkout_builder.create_checkout
             rescue ::ShopifyCheckout::Errors::CheckoutError => e
@@ -79,8 +79,7 @@ module SpreeSaleChannel
                 order: order_params(order),
                 line_items: line_items_params(order),
                 bill_address: address_params(order.bill_address),
-                ship_address: address_params(order.ship_address),
-                rates: @rate_params
+                ship_address: address_params(order.ship_address)
             }
         end
 
@@ -140,7 +139,7 @@ module SpreeSaleChannel
         def shipping_cache_key(order)
             ship_address = order.ship_address
             contents_hash = Digest::MD5.hexdigest(order.line_items.map {|line_item| line_item.variant.id.to_s + "_" + line_item.quantity.to_s }.join("|"))
-            @cache_key = "#{order.number}-#{order.state}-#{ship_address.country.iso}-#{fetch_best_state_from_address(ship_address)}-#{ship_address.city}-#{ship_address.zipcode}-#{contents_hash}".gsub(" ","")
+            @cache_key = "#{order.number}-#{ship_address.country.iso}-#{fetch_best_state_from_address(ship_address)}-#{ship_address.city}-#{ship_address.zipcode}-#{contents_hash}".gsub(" ","")
         end
 
         def fetch_best_state_from_address(address)

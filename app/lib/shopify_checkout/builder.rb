@@ -1,6 +1,5 @@
 require 'faraday'
 module ShopifyCheckout
-    API_VERSION = '2021-07'
     class Builder < Base
         def initialize(params)
             checkout = params.deep_symbolize_keys
@@ -12,14 +11,6 @@ module ShopifyCheckout
             @ship_address = checkout[:ship_address]
             @rate = checkout[:rate]
             @shop = ::SpreeSaleChannel::Shop.find_by(domain: @vendor)
-        end
-
-        def client
-            @client
-        end
-
-        def logger
-            @logger
         end
 
         def validate!
@@ -75,15 +66,14 @@ module ShopifyCheckout
         end
 
         def shipping_line_params
-            return nil unless @rates
+            return nil unless @rate
             @shipping_line ||= {
                 handle: @rate[:handle],
                 price: @rate[:price],
                 title: @rate[:title]
             }
         end
-
-        #TODO change credit card for CC token
+        
         def checkout_params
             {
                 checkout: {
@@ -91,7 +81,6 @@ module ShopifyCheckout
                     billing_address: create_address_params(@bill_address),
                     shipping_address: create_address_params(@ship_address),
                     shipping_line: shipping_line_params,
-                    credit_card_token: @credit_card_token,
                     phone: @bill_address[:phone]
                 }
             }

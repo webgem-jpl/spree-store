@@ -10,10 +10,6 @@ module ShopifyCheckout
             @options = options.deep_symbolize_keys
         end
 
-        def logger
-            @logger
-        end
-
         def validate!
             raise Errors::MissingValue.new('Missing "vendor" attribute') unless @vendor.present?
             raise Errors::MissingVendor.new('Shop not found') unless @shop.present?
