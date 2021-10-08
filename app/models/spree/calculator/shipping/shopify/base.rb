@@ -4,6 +4,10 @@ module Spree
     module Calculator::Shipping
         module Shopify
             class Base < Spree::ShippingCalculator
+
+                def self.shopify?
+                    true
+                end
             
                 def compute_package(package)
                     rates_result = retrieve_rates(package)

@@ -46,7 +46,9 @@ module SpreeSaleChannel
             return unless shopify?
             token = order.checkout.token
             shipments = ::Spree::Shipment.where(order_id: order.id).includes(shipping_rates: {shipping_method: {calculator: {}}})
-            title = shipments.first.shipping_rates.detect{|s| s.selected}.shipping_method.calculator.class.title
+            calculator = shipments.first.shipping_rates.detect{|s| s.selected}.shipping_method.calculator
+            raise "Calculator must be for Shopify" unless calculator.class.try(:shopify?)
+            title = calculator.class.title
             rates_result = get_shipping_rates
             rate = rates_result.detect{|r| r['title'] == title}
             raise "Missing shipping rate" unless rate
