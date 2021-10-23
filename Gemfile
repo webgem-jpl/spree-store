@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.0.2'
 
+gem 'addressable'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'rails', '~> 6.1.4', '>= 6.1.4.1'
 # PostgreSQL database
@@ -70,7 +71,5 @@ gem 'spree_auth_devise', '~> 4.3' # Devise integration (optional)
 gem 'spree_gateway', '~> 3.9' # payment gateways eg. Stripe, Braintree (optional)
 gem 'spree_i18n', '~> 5.0' # translation files (optional) 
 
-source "https://#{ENV['FURY_AUTH']}@gem.fury.io/webgem/" do
-  gem 'spree_uuid','~> 0.0.2'
-  gem 'spree_sale_channel', path: "../spree_sale_channel"
-end
+gem 'spree_uuid','~> 0.0.2', git: 'https://github.com/webgem-jpl/spree_uuid.git'
+gem 'spree_sale_channel', git: 'https://github.com/webgem-jpl/spree_sale_channel.git'
