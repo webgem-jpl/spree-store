@@ -5,31 +5,29 @@ RUN set -eux \
     & apk add \
         --no-cache \
         nodejs \
-        yarn
+        yarn \
+        git
 
 
-COPY . /app
-ARG FURY_AUTH
+ARG BUNDLE_GITHUB__COM
 WORKDIR /app
+
 COPY Gemfile /app/Gemfile
 COPY Gemfile.lock /app/Gemfile.lock
-RUN bundle config set gem.fury.io $FURY_AUTH && \
-  bundle config set --local without 'development test' && \
-  bundle install --jobs 5
-
+RUN bundle config set --local without 'development test' && \
+  bundle install --jobs 4 --retry 3
 
 COPY package.json .
 COPY yarn.lock .
-RUN yarn install
 RUN yarn install --check-files
+
+Copy . /app 
 
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 8812
-
-COPY . /app
 
 # Configure the main process to run when running the image
 CMD ["rails", "server", "-b", "0.0.0.0"]
