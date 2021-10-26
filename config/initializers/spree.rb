@@ -29,12 +29,3 @@ end
 # Spree::Api::Dependencies.storefront_cart_serializer = 'MyRailsApp::CartSerializer'
 
 Spree.user_class = "Spree::User"
-
-# TODO move to spree_sale_channel
-config = Rails.application.config
-config.spree.calculators.shipping_methods << ::Spree::Calculator::Shipping::Shopify::StandardInternational
-config.spree.calculators.shipping_methods << ::Spree::Calculator::Shipping::Shopify::Standard
-config.spree.calculators.shipping_methods << ::Spree::Calculator::Shipping::Shopify::ExpressInternational
-config.spree.calculators.shipping_methods << ::Spree::Calculator::Shipping::Shopify::Express
-
-config.spree.calculators.tax_rates << ::Spree::Calculator::ShopifyTax

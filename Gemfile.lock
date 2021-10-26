@@ -1,15 +1,15 @@
 PATH
-  remote: vendor/gems/spree_sale_channel
+  remote: ../spree_sale_channel
   specs:
-    spree_sale_channel (0.0.34)
+    spree_sale_channel (0.0.36)
       faraday (>= 1.8.0)
-      spree_api (>= 4.2.0, < 6.0)
-      spree_backend (>= 4.2.0, < 6.0)
-      spree_core (>= 4.2.0, < 6.0)
+      spree_api (>= 4.3.0, < 6.0)
+      spree_backend (>= 4.3.0, < 6.0)
+      spree_core (>= 4.3.0, < 6.0)
       spree_extension (>= 0.0.9)
 
 PATH
-  remote: vendor/gems/spree_uuid
+  remote: ../spree_uuid
   specs:
     spree_uuid (0.0.3)
       spree_api (>= 4.2.0, < 6.0)

@@ -18,8 +18,7 @@ services:
     build:
       context: .
       args:
-        FURY_AUTH: 1Z1erF-4Hou4ABoHfx5IZV6bwMgFn9YDC8
-        BUNDLE_GITHUB__COM: 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:x-oauth-basic
+        BUNDLE_GITHUB__COM: ${BUNDLE_GITHUB__COM}
     environment:
       DB_HOST: postgres
       REDIS_URL: redis://redis_db:6389/spree-store
