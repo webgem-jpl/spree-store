@@ -10,6 +10,7 @@ Things you may want to cover:
 * System dependencies
 
 * Configuration
+    export BUNDLE_GITHUB__COM=XXXXXXXX:x-oauth-basic
 
 * Database creation
 
